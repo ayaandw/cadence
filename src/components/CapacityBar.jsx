@@ -8,7 +8,6 @@ export function CapacityBar({
     onRebalance,
 }) {
     const  {scheduledMins, compMins, capMins: cap, status} = load;
-
     const compPct = Math.min(100, (compMins / cap) * 100);
     const scheduledPct = Math.min(100 - compPct, (scheduledMins / cap) * 100);
 
