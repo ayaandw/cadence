@@ -13,11 +13,11 @@ export function CapacityBar({
 
     const statusMeta = {
         light: {
-            label: "Open Runway",
+            label: "Relaxed Schedule",
             color: "var(--accent)",
             bg: "var(--accent-soft)",
             icon: Sparkles,
-            hint: "Room for a break or to keep a light evening."
+            hint: "Room for a break or to keep a light work block."
         },
         balanced: {
             label: "Balanced Load",
