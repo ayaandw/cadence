@@ -4,7 +4,7 @@ import {formatMins} from "../utils/scheduler";
 export function CapacityBar({
     load,
     capMins,
-    onChanceCap,
+    onChangeCap,
     onRebalance,
 }) {
     const  {scheduledMins, compMins, capMins: cap, status} = load;
@@ -91,7 +91,7 @@ export function CapacityBar({
                         className = "select"
                         style = {{width: "auto", padding: "5px 10px", fontSize: "0.82rem"}}
                         value = {capMins}
-                        onChange = {(e) => onChanceCap(Number(e.target.value))}
+                        onChange = {(e) => onChangeCap(Number(e.target.value))}
                     >
                         <option value={60}>1h 00m</option>
                         <option value={90}>1h 30m</option>
@@ -119,7 +119,7 @@ export function CapacityBar({
                 <div
                     title = {`Completed: ${formatMins(compMins)}`}
                     style={{
-                        width: `${completedPct}%`,
+                        width: `${compPct}%`,
                         background: "var(--accent)",
                         transition: "width 0.25s ease",
                     }}

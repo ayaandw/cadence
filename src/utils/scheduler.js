@@ -33,11 +33,11 @@ export function createChunks({taskID, title, totalMins, chunkSize = 30}) {
             id: `${taskID}_c${i}`,
             taskID,
             title,
-            part: index,
+            part: i,
             label: `${title} · Block ${i}`,
             minutes: duration,
             completed: false,
-            offset: 0,
+            dayOffset: 0,
         });
         remaining -= duration;
         i++;
@@ -106,8 +106,8 @@ export function rebalance(chunks, capMins, dayOffset = 0) {
 
     return {
         updatedChunks : reversed.reverse(),
-        movedCount,
-        movedMins,
+        deltaCount,
+        deltaMins,
     };
 }
 

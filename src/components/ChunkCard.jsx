@@ -20,7 +20,7 @@ export function ChunkCard({
                 justifyContent: "space-between",
                 alignItems: "center",
                 gap: "12px",
-                opacity: chunkcompleted ? 0.65 : 1,
+                opacity: chunk.completed ? 0.65 : 1,
                 transition: "opacity 0.18s ease, transform 0.12s ease",
             }}
         >
@@ -58,12 +58,25 @@ export function ChunkCard({
                             textOverflow: "ellipsis"
                         }}
                     >
+                        {chunk.label}
+                    </div>
+                    <div
+                        style = {{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            marginTop: "3px",
+                            fontSize: "0.78rem",
+                            color: "var(--text-muted)",
+                            flexWrap: "wrap",
+                        }}
+                    >
                         <span style = {{display: "inline-flex", alignItems: "center", gap: "4px"}}>
                             <Clock size={12}/>
                             {formatMins(chunk.minutes)}
                         </span>
                         {dueDate && <span>Due {dueDate}</span>}
-                        {isTomorrow && (
+                        {tomorrow && (
                             <span
                                 style={{
                                     background: "var(--surface-subtle)",
@@ -95,10 +108,10 @@ export function ChunkCard({
                     <button
                         type = "button"
                         className = "btn btn-ghost"
-                        title={isTomorrow ? "Move back by a day" : "Shift to tomorrow (no guilt)"}
-                        onClick={() => onMoveDay(chunk.id, isTomorrow ? -1 : 1)}
+                        title={tomorrow ? "Move back by a day" : "Shift to tomorrow (no guilt)"}
+                        onClick={() => onMoveDay(chunk.id, tomorrow ? -1 : 1)}
                     >
-                        {isTomorrow ? <ArrowLeft size={15}/> : <ArrowRight size={15}/>}
+                        {tomorrow ? <ArrowLeft size={15}/> : <ArrowRight size={15}/>}
                     </button>
                 )}
                 <button

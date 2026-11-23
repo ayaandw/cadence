@@ -49,9 +49,9 @@ export function TaskForm({addTask}) {
                         id="task-title"
                         className = "input"
                         type ="text"
-                        paceholder = "e.g., Science Lab, English Essay..."
+                        placeholder = "e.g., Science Lab, English Essay..."
                         value={title}
-                        onChance={(e) => setTitle(e.target.value)}
+                        onChange={(e) => setTitle(e.target.value)}
                         required
                     />
                 </div>
@@ -102,7 +102,7 @@ export function TaskForm({addTask}) {
                 <div>
                     <label
                         htmlFor="task-due"
-                        style={{display: "block", fontSize: "0.8rem", color:"var(--text-muted", marginBottom: "4px"}}
+                        style={{display: "block", fontSize: "0.8rem", color:"var(--text-muted)", marginBottom: "4px"}}
                     >Due Date (optional)</label>
                     <input
                         id = "task-due"
