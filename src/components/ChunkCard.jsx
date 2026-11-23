@@ -15,7 +15,7 @@ export function ChunkCard({
         <div
             className = "card"
             style= {{
-                padding: "14px 16px",
+                padding: "18px 22px",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -49,8 +49,8 @@ export function ChunkCard({
                 <div style={{minWidth: 0}}>
                     <div
                         style={{
-                            fontSize: "0.95rem",
-                            fontWeight: 500,
+                            fontSize: "1.08rem",
+                            fontWeight: 600,
                             textDecoration: chunk.completed ? "line-through" : "none",
                             color: chunk.completed ? "var(--text-muted)" : "var(--text)",
                             whiteSpace: "nowrap",
@@ -65,13 +65,13 @@ export function ChunkCard({
                             display: "flex",
                             alignItems: "center",
                             gap: "10px",
-                            marginTop: "3px",
-                            fontSize: "0.78rem",
+                            marginTop: "5px",
+                            fontSize: "0.86rem",
                             color: "var(--text-muted)",
                             flexWrap: "wrap",
                         }}
                     >
-                        <span style = {{display: "inline-flex", alignItems: "center", gap: "4px"}}>
+                        <span style = {{display: "inline-flex", alignItems: "center", gap: "8px"}}>
                             <Clock size={12}/>
                             {formatMins(chunk.minutes)}
                         </span>
@@ -100,7 +100,7 @@ export function ChunkCard({
                         style={{color: "var(--accent)"}}
                     >
                         <Play size={15}/>
-                        <span style={{fontSize: "0.8rem"}}>Focus</span>
+                        <span style={{fontSize: "0.9rem"}}>Focus</span>
                     </button>
                 )}
 

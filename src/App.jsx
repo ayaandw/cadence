@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Flame, Palette, CalendarDays, CheckCircle} from "lucide-react";
+import {Flame, Palette, CalendarDays, Plus, X} from "lucide-react";
 import {useLocalStorage} from "./hooks/useLocalStorage";
 import {createTask, evaluateLoad, rebalance, formatMins} from "./utils/scheduler";
 import {CapacityBar} from "./components/CapacityBar";
@@ -10,7 +10,8 @@ import {FocusMode} from "./components/FocusMode";
 const themes = [
   {id: "paper", label: "Paper", unlockAt: 0},
   {id: "midnight", label: "Midnight", unlockAt: 0},
-  {id: "matcha", label: "Matcha", unlockAt: 0}
+  {id: "matcha", label: "Matcha", unlockAt: 2},
+  {id: "sakura", label: "Sakura", unlockAt: 4}
 ]
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
   const [day, setDay] = useState(0);
   const [activeFocus, setActiveFocus] = useState(null);
   const [banner, setBanner] = useState("");
+  const [taskModeOpen, setTaskModeOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -37,28 +39,31 @@ export default function App() {
     const {task, chunks: newChunks} = createTask(input);
     setTasks((prev) => [task, ...prev]);
     setChunks((prev) => [...prev, ...newChunks]);
+    setTaskModeOpen(false);
     notify(`Added "${task.title}" (${newChunks.length} focus ${newChunks.length === 1 ? "block" : "blocks"})`);
   }
 
   function handleToggleComplete(chunkID) {
+    const target = chunks.find((c) => c.id === chunkID);
+    if (!target) return;
+    const nextComp = !target.completed;
     setChunks((prev) =>
-      prev.map((chunk) => {
-        if (chunk.id !== chunkID) return chunk;
-        const nextComp = !chunk.completed;
-        setCompletedCount((c) => Math.max(0, nextComp ? c + 1 : c - 1));
-        return {...chunk, completed: nextComp};
-      })
+      prev.map((chunk) =>
+        chunk.id === chunkID ? {...chunk, completed: nextComp} : chunk
+      )
     );
+    setCompletedCount((c) => Math.max(0, nextComp ? c + 1 : c - 1));
   }
 
   function handleCompletion(chunkId) {
+    const target = chunks.find((c) => c.id === chunkId);
+    if (!target || target.completed) return;
     setChunks((prev) =>
-      prev.map((chunk) => {
-        if (chunk.id !== chunkId || chunk.completed) return chunk;
-        setCompletedCount((c) => c + 1);
-        return {...chunk, completed: true};
-      })
+      prev.map((chunk) =>
+        chunk.id === chunkId ? {...chunk, completed: true} : chunk
+      )
     );
+    setCompletedCount((c) => c + 1);
     notify("Block completed - good work!")
   }
 
@@ -145,7 +150,134 @@ export default function App() {
         onRebalance= {handleRebalance}
       />
 
-      <div className = "main-grid">
+      <section>
+        <div
+          style = {{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "18px",
+            gap: "12px",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
+            <button
+              type = "button"
+              className = {`btn ${day === 0 ? "btn-primary" : ""}`}
+              onClick = {() => setDay(1)}
+            >
+              Today ({chunks.filter((c) => (c.dayOffset || 0) === 0).length})
+            </button>
+            <button
+              type = "button"
+              className = {`btn ${day === 1 ? "btn-primary" : ""}`}
+              onClick = {() => setDay(1)}
+            >
+              <CalendarDays size={16}/>
+              Upcoming ({chunks.filter((c) => (c.dayOffset || 0) >= 1).length})
+            </button>
+          </div>
+
+          <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
+            {day === 1 && chunks.some((c) => (c.dayOffset || 0) >= 1 && !c.completed) && (
+              <button
+                type = "button"
+                className = "btn"
+                onClick = {() => {
+                  setChunks((prev) =>
+                    prev.map((c) =>
+                      !c.completed && (c.dayOffset || 0) >= 1
+                      ? {...c, dayOffset: c.dayOffset - 1} : c  
+                    )
+                  );
+                  notify("Pulled upcoming blocks forward. Nice!")
+                }}
+              >Pull Closer (up 1d)</button>
+            )}
+            <button
+              type = "button"
+              className = "btn btn-primary"
+              onClick = {() => setTaskModeOpen(true)}
+            >
+              <Plus size={18}/>
+              New Task
+            </button>
+          </div>
+        </div>
+
+        {visChunks.length === 0 ? (
+            <div className="card" style={{textAlign: "center", padding: "36px 20px", color: "var(--text-muted)"}}>
+              <p style={{fontWeight: 500, color: "var(--text)", marginBottom: "4px"}}>
+                {day === 0 ? "No blocks scheduled for today" : "No upcoming blocks queued"}
+              </p>
+              <p style={{fontSize: "0.85rem"}}>
+                {day === 0
+                  ? "Add an assignment on the left to break it into realistic blocks."
+                  : "Rebalancing an overloaded day or shifting a block to tomorrow shows here."
+                }
+              </p>
+            </div>
+          ) : (
+            <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
+              {visChunks.map((chunk) => (
+                <ChunkCard
+                  key = {chunk.id}
+                  chunk = {chunk}
+                  dueDate = {taskById[chunk.taskId]?.dueDate}
+                  onToggleComplete = {handleToggleComplete}
+                  onStartFocus = {(c) => setActiveFocus(c)}
+                  onMoveDay = {handleMove}
+                  onDeleteChunk = {handleDeleteChunk}
+                />
+              ))}
+            </div>
+          )}
+      </section>
+
+      {taskModeOpen && (
+        <div
+          className = "mode-backdrop"
+          onClick = {() => setTaskModeOpen(false)}
+          style = {{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(6px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+            zIndex: 50,
+          }}
+        >
+          <div
+            className = "mode-card"
+            onClick = {(e) => e.stopPropagation()}
+            style = {{width: "100%", maxWidth: "460px", position: "relative"}}
+          >
+            <button
+              type = "button"
+              className = "btn btn-ghost"
+              aria-label = "Close new task mode"
+              onClick = {() => setTaskModeOpen(false)}
+              style = {{position: "absolute", top: "14px", right: "14px", padding: "8px"}}
+            ><X size={18}/></button>
+            <TaskForm addTask = {handleAddTask}/>
+          </div>
+        </div>
+      )}
+      <FocusMode
+        chunk = {activeFocus}
+        onClose = {() => setActiveFocus(null)}
+        onCompleteChunk = {handleCompletion}
+      />
+    </div>
+  );
+}
+
+
+      {/* <div className = "main-grid">
         <aside style={{display: "flex", flexDirection: "column", gap: "16px"}}>
           <TaskForm addTask = {handleAddTask}/>
 
@@ -206,42 +338,5 @@ export default function App() {
               </button>
             )}
           </div>
-
-          {visChunks.length === 0 ? (
-            <div className="card" style={{textAlign: "center", padding: "36px 20px", color: "var(--text-muted)"}}>
-              <p style={{fontWeight: 500, color: "var(--text)", marginBottom: "4px"}}>
-                {day === 0 ? "No blocks scheduled for today" : "No upcoming blocks queued"}
-              </p>
-              <p style={{fontSize: "0.85rem"}}>
-                {day === 0
-                  ? "Add an assignment on the left to break it into realistic blocks."
-                  : "Rebalancing an overloaded day or shifting a block to tomorrow shows here."
-                }
-              </p>
-            </div>
-          ) : (
-            <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
-              {visChunks.map((chunk) => (
-                <ChunkCard
-                  key = {chunk.id}
-                  chunk = {chunk}
-                  dueDate = {taskById[chunk.taskId]?.dueDate}
-                  onToggleComplete = {handleToggleComplete}
-                  onStartFocus = {(c) => setActiveFocus(c)}
-                  onMoveDay = {handleMove}
-                  onDeleteChunk = {handleDeleteChunk}
-                />
-              ))}
-            </div>
-          )}
         </section>
-      </div>
-
-      <FocusMode
-        chunk = {activeFocus}
-        onClose = {() => setActiveFocus(null)}
-        onCompleteChunk = {handleCompletion}
-      />
-    </div>
-  );
-}
+      </div> */}
