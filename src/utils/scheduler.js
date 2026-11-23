@@ -21,7 +21,7 @@ export function createTask({title, dueDate = "", totalMins = 60, chunkSize = 30}
     return{task, chunks};
 }
 
-export function createChunks({taskID, title, totalMins, chunkSize = 30}) {
+export function createChunks({taskId, title, totalMins, chunkSize = 30}) {
     const chunks = [];
     let remaining = Math.max(15, Number(totalMins) || 30);
     const step = Math.max(15, Number(chunkSize) || 30);
@@ -30,8 +30,8 @@ export function createChunks({taskID, title, totalMins, chunkSize = 30}) {
     while(remaining > 0) {
         const duration = remaining <= step + 10 ? remaining : step;
         chunks.push({
-            id: `${taskID}_c${i}`,
-            taskID,
+            id: `${taskId}_c${i}`,
+            taskId,
             title,
             part: i,
             label: `${title} · Block ${i}`,

@@ -32,14 +32,14 @@
 }
 
 [data-theme = "matcha"] {
-  --bg: #eff4ef;
-  --surface: #fafcf9;
-  --surface-subtle: #e3ece3;
-  --border: #cddbce;
-  --text: #1b2a1e;
-  --text-muted: #556b59;
-  --accent: #3b7a57;
-  --accent-soft: #dcebe1;
+  --bg: #dfece0;
+  --surface: #f2f8f2;
+  --surface-subtle: #d0e4d2;
+  --border: #b3cfb6;
+  --text: #142618;
+  --text-muted: #46634b;
+  --accent: #256942;
+  --accent-soft: #c5e0ca;
   --warn: #b45309;
   --warn-soft: #fef3c7;
   --overload: #be123c;

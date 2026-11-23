@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Flame, Palette, CalendarDays, CheckCircle} from "lucide-react";
 import {useLocalStorage} from "./hooks/useLocalStorage";
-import {createTask, evaluateLoad, rebalance, formMins} from "./utils/scheduler";
+import {createTask, evaluateLoad, rebalance, formatMins} from "./utils/scheduler";
 import {CapacityBar} from "./components/CapacityBar";
 import {TaskForm} from "./components/TaskForm";
 import {ChunkCard} from "./components/ChunkCard";
@@ -17,7 +17,7 @@ export default function App() {
   const [tasks, setTasks] = useLocalStorage("cadence.tasks.v1", []);
   const [chunks, setChunks] = useLocalStorage("cadence.chunks.v1", []);
   const [capMins, setCapMins] = useLocalStorage("cadence.cap.v1", 150);
-  const [theme, setTheme] = useLocalStorage("cadence.theme.v1", paper);
+  const [theme, setTheme] = useLocalStorage("cadence.theme.v1", "paper");
   const [completedCount, setCompletedCount] = useLocalStorage("cadence.completedCount.v1", 0);
   const [day, setDay] = useState(0);
   const [activeFocus, setActiveFocus] = useState(null);
@@ -84,11 +84,11 @@ export default function App() {
       return;
     }
     setChunks(updatedChunks);
-    notify(`Moved ${movedCount} ${movedCount === 1 ? "block" : "blocks"} (${formMins(movedMins)}) to tomorrow`);
+    notify(`Moved ${movedCount} ${movedCount === 1 ? "block" : "blocks"} (${formatMins(movedMins)}) to tomorrow`);
   }
 
   const todayLoad = evaluateLoad(chunks, capMins, 0);
-  const taskID = Object.fromEntries(tasks.map((t) => [t.id, t]));
+  const taskById = Object.fromEntries(tasks.map((t) => [t.id, t]));
   const visChunks = chunks.filter((c) => 
     day === 0 ? (c.dayOffset || 0) === 0 : (c.dayOffset || 0) >= 1
   );
@@ -102,9 +102,9 @@ export default function App() {
             <Flame size={13} style={{color: "var(--accent)"}}/>
             {completedCount} {completedCount === 1 ? "block" : "blocks"} done
           </span>
-          {statusBanner && (
+          {banner && (
             <span className="badge" style={{color: "var(--accent)"}}>
-              {statusBanner}</span>
+              {banner}</span>
           )}
         </div>
 
@@ -154,7 +154,7 @@ export default function App() {
               <CheckCircle size={14} style={{color: "var(--accent)"}}/>
               Pacing Rule
             </div>
-            Big tasks split into manageable blocks so you don't face a flood of work. Shift overflow to tomorrow anytime.
+            Big tasks are split into manageable blocks so you don't face a flood of work. Shift overflow to tomorrow anytime.
           </div>
         </aside>
 
@@ -225,7 +225,7 @@ export default function App() {
                 <ChunkCard
                   key = {chunk.id}
                   chunk = {chunk}
-                  dueDate = {taskID[chunk.taskID]?.dueDate}
+                  dueDate = {taskById[chunk.taskId]?.dueDate}
                   onToggleComplete = {handleToggleComplete}
                   onStartFocus = {(c) => setActiveFocus(c)}
                   onMoveDay = {handleMove}

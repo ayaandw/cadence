@@ -8,8 +8,8 @@ export function CapacityBar({
     onRebalance,
 }) {
     const  {scheduledMins, compMins, capMins: cap, status} = load;
-    const compPct = Math.min(100, (compMins / cap) * 100);
-    const scheduledPct = Math.min(100 - compPct, (scheduledMins / cap) * 100);
+    const completedPct = Math.min(100, (compMins / cap) * 100);
+    const scheduledPct = Math.min(100 - completedPct, (scheduledMins / cap) * 100);
 
     const statusMeta = {
         light: {
@@ -84,7 +84,7 @@ export function CapacityBar({
                         htmlFor = "cap-select"
                         style = {{fontSize: "0.82rem", color: "var(--text-muted)"}}
                     >
-                        Daily Budget:
+                        Healthy Limit:
                     </label>
                     <select
                         id = "cap-select"
@@ -119,7 +119,7 @@ export function CapacityBar({
                 <div
                     title = {`Completed: ${formatMins(compMins)}`}
                     style={{
-                        width: `${compPct}%`,
+                        width: `${completedPct}%`,
                         background: "var(--accent)",
                         transition: "width 0.25s ease",
                     }}
@@ -159,7 +159,7 @@ export function CapacityBar({
                     <strong style={{color: "var(--text)"}}>
                         {formatMins(compMins)}
                     </strong>{" "}
-                    done · {formatMins(cap)} budget
+                    done · {formatMins(cap)} limit
                 </div>
                 {(status === "overloaded" || status === "heavy") && (
                     <button className= "btn btn-primary" onClick = {onRebalance}>
