@@ -1,16 +1,27 @@
-# React + Vite
+# Cadence
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Demo at: https://cadence-eight-phi.vercel.app**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+A workload planner that breaks big assignments into focus blocks and tracks daily work and healthy limits to help hardworking students manage their time
 
-## React Compiler
+## Built With
+* React and Vite for a responsive but minimal experience
+    * Also ensures demo is always up to date (vercel auto-deploys from repository)
+* CSS styling with Plus Jakarta Sans and Inter
+* Lucide icons and local storage within browser
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
+* Automatic task chunking into manageable blocks with an easy to use task creator
+* Daily capacity bar to balance workload for a day and easily manage it across days
+    * Doesn't overwhelm user with too many due dates, allowing them to focus on a day at a time
+* Four easily switchable themes (and ability to integrate many more into code)
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## How to Run
+* First, try demo (https://cadence-eight-phi.vercel.app)
+* If that doesn't work:
+    1. Install everything on repository
+    2. Install dependencies with `npm install`
+    3. Start local server with `npm run dev` and use localhost
+    4. To run your own build which can be published, run `npm run build` and use `/dist` on any hosting platform
